@@ -10,6 +10,8 @@ debt_artifacts: [debt/07-C1-ban-sanction-contract.md, debt/07-C2-pause-shadow-co
 
 # БЛОК 7. КОНТРОЛЬНЫЕ ДНИ И МОДЕРАЦИЯ
 
+> **Переопределено ERRATA-UNIFIED.** Состояния `banned_soft` и `banned_hard` **удалены** патчем И2 (Р477) — все упоминания «бана» в этом блоке читаются через `sleeping` + `author_pause` + owner-review. Команда `/graph` (k ≥ 5, защита от атаки пересечением), UI причины теневой паузы, `muted` и запрет отката применённого этапа — патч И4. Текст отказа владельцу с ручным путём компенсации — ADD4 ERRATA (`B7.stage_pass_rollback_not_supported_owner`). См. [normative/I2-wave-b.md](normative/I2-wave-b.md), [normative/I4-wave-d.md](normative/I4-wave-d.md), [normative/errata-unified.md](normative/errata-unified.md).
+
 (с подмодулем «График»)
 
 ## 7.1. Структура и типы дней

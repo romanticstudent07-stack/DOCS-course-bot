@@ -26,7 +26,7 @@ contains:
   - architecture_100pct_complete
 touches_blocks: [2, 4, 5, 7, 8, 9, 10, 13, 14, 15, 16]
 yaml_verbatim: true
-defects_logged_in: ../_WIP-architecture-split.md
+defects_logged_in: ../appendix/D-source-defects.md
 ---
 
 # ПАТЧ И4 — ВОЛНА D: MINI APP + ТЕКСТЫ + ТЕМЫ + /GRAPH + КНОПКИ + ФИНАЛ АРХИТЕКТУРЫ

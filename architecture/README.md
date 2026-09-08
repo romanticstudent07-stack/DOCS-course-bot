@@ -114,6 +114,7 @@ SEAM-PATCH-1 закрывает последний шов: каноническ�
 | A3_outbox_dlq_and_saga_granularity | A3 | Блок 15 | CLOSE, v3.2; компакция outbox дополнена инвариантом `INV-OUTBOX-SENT-AT-COMPACTION` и метриками рассылки (ERRATA ADD1/ADD2, A1) | [debt/15-A3-outbox-dlq-saga-granularity.md](debt/15-A3-outbox-dlq-saga-granularity.md) |
 | A4_nonreidentifiability_and_backup_erasure | A4 | Блок 15 | CLOSE(тех)/STUB(Legal), v3.2; сверить с 3-летним retention `refund_details`, порядком отсрочек стирания и удалением всех версий объектов (И3); число ротации бэкапов поднято ERRATA до блокера прод-запуска (ADD5), при подстановке берётся более строгая граница A4 с учётом WAL | [debt/15-A4-nonreidentifiability-backup-erasure.md](debt/15-A4-nonreidentifiability-backup-erasure.md) |
 | B1_sweeper_guard | B1 | Блок 16 | CLOSE, v3.2; sweeper дополнительно добирает `refund_pending` после таймаута PSP, рядом введён `refund_reconciliation_watcher` (И3) | [debt/16-B1-sweeper-guard.md](debt/16-B1-sweeper-guard.md) |
+| infra-C4-maintenance-contract | C4 | Инфра ↔ Б15 ↔ Б10 | CLOSE(контракт), STUB(SLA) | [debt/infra-C4-maintenance-contract.md](debt/infra-C4-maintenance-contract.md) |
 
 Собственные открытые долги и расхождения блока 10 (адресаты Б3/Б4, Б6, Б9, Б14, Б15, Б16, КЗ-Юр, QA) ведутся в его верхнем файле [10-lifecycle-return.md](10-lifecycle-return.md) и в приложение C переносятся только в части, затрагивающей другие блоки.
 

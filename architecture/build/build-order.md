@@ -1,0 +1,90 @@
+---
+file: build/build-order.md
+block: "—"
+title: "Порядок сборки: зависимости, миграции, синтетический запуск"
+status: скелет
+---
+
+# Порядок сборки
+
+Скелет для агента бота: с чего начинать реализацию, чтобы система собралась без круговых зависимостей.
+
+## Уровень 0 — инфраструктура
+
+1. PostgreSQL (основная БД) + PITR-настройка.
+2. S3-совместимое хранилище (`{s3-domain-ru}` — до решения Автора: Yandex Cloud / Timeweb Cloud).
+3. Redis (только буфер аналитики, критичные события — синхронно в PG, см. `critical_writes: synchronous_postgres`).
+4. Object Lock отключён на бакетах фото; `COMPLIANCE`/WORM на бакетах аудита.
+
+## Уровень 1 — ядро данных
+
+1. DDL из [db-schema.sql](db-schema.sql) — все ~34 таблицы + роли (`participant_state_projector`, `participant_state_reader`).
+2. `outbox` + `dlq` + `consumer_offsets` (Б15/И2).
+3. `text_registry` — пустой + seed из блоков 2, 3, 5, 9, 10, 15, 16 после юридической вычитки (И4).
+
+## Уровень 2 — проекторы и саги
+
+1. `participant_state_projector` (владелец Б10) — читает `state_transition_log`, пишет `participant_state`.
+2. Refund Saga (Б16 + И3).
+3. Photo Ingest Saga (Б15 + И3).
+4. Red Flags Protocol (Б5 + И3, авто-эскалация за 60 сек).
+5. Export Worker (Б14 + И3, `data_export_event`).
+
+## Уровень 3 — API и клиенты
+
+1. Telegram Bot API — команды из [C-registries.md#реестр-команд-бота](../appendix/C-registries.md), 35 команд.
+2. Mini App API — [miniapp-api-contract.yaml](miniapp-api-contract.yaml), 8+ эндпоинтов, CSP `default-src 'self'` (E2).
+3. Панель Автора (Б17) — 6 поверхностей администрирования.
+
+## Уровень 4 — гейт прод-запуска (boot-gate)
+
+Не запускать в прод, пока не закрыт каждый из семи пунктов [C-registries.md#8-boot-gate](../appendix/C-registries.md):
+
+1. Все 15+ текстов `legal_status: pre-legal-review` подписаны юристом.
+2. Д-40 закрыт (РКН реальным событием).
+3. Д-30 закрыт (DPA с провайдером).
+4. Д-31 закрыт (модель угроз, УЗ-3).
+5. `{s3-domain-ru}` заменён на реальный домен.
+6. `full_backup_rotation_cycle` заменён на число (более строгая граница A4 с учётом WAL).
+7. Все `pre-legal-review` сняты.
+
+## Минимальный синтетический запуск (для приёмки)
+
+```
+1) pg + s3-mock + redis
+2) DDL + seed text_registry (черновые тексты, БЕЗ прод-текстов)
+3) participant_state_projector
+4) один stub-эндпоинт Mini App + ручной онбординг из бот-диалога (для тестов)
+5) refund saga в dry-run режиме
+6) панель Автора (только whitelist из feature flags)
+```
+
+`ready_for_synthetic_launch: yes` — при выполнении всех шести пунктов выше.
+
+## Переменные окружения (минимум)
+
+- `BOT_TOKEN` — Telegram Bot API.
+- `PG_DSN` — DSN основной БД.
+- `PG_DSN_READER` — DSN read-replica для аналитики.
+- `S3_ENDPOINT` — `{s3-domain-ru}` (после решения Автора).
+- `S3_ACCESS_KEY`, `S3_SECRET_KEY` — секреты S3.
+- `REDIS_URL` — Redis (только буфер).
+- `MINIAPP_URL` — URL Mini App (в РФ).
+- `WHITELIST_ADMIN_IDS` — список tg_user_id Автора и партнёров.
+- `FEATURE_FLAGS` — `miniapp_enabled`, `broadcast_enabled` и т.д.
+- `LEGAL_GATE_MODE` — `blocking` (прод) или `advisory` (синтетика).
+
+## Состав `docker-compose.yaml` (минимум)
+
+- `postgres:16` с WAL-репликацией.
+- `redis:7`.
+- `minio` (S3-mock для синтетики).
+- `bot` — Python 3.12 + Telegram Bot API + FastAPI (Mini App back-end).
+- `miniapp` — статика (nginx + CSP-заголовок из E2).
+- `worker` — export-worker + saga executors.
+
+## Долг
+
+- Config-schemas для всех YAML — [config-schemas/](config-schemas/) (создать при первом реальном конфиге).
+- CI-pipeline — [ci-checks.yaml](ci-checks.yaml).
+- Плейлист миграций (Alembic) — при первой правке DDL после первого прода.
