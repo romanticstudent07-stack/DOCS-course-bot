@@ -9,6 +9,8 @@ contains: [4.1–4.12, fail-safe, yaml]
 
 # БЛОК 4. ОНБОРДИНГ
 
+> **Переопределено SEAM-PATCH-1 и ERRATA-UNIFIED.** Канонической точкой создания участника (`pid`) объявлен first-launch Mini App (SEAM-1) — не бот-диалог. Блок 4 сохранён как содержание онбординга (согласия, оплата, анкета, Чек-Ап, правила), но не как точка первичной регистрации. Возрастной гейт вынесен перед созданием `pid` (ADD3 ERRATA, `INV-AGE-GATE-BEFORE-PID`). Конвейер согласий C0–C6 и контур поддержки — патч И4 (E2/E3). См. [normative/seam-patch-1-onboarding.md](normative/seam-patch-1-onboarding.md), [normative/I4-wave-d.md](normative/I4-wave-d.md), [normative/errata-unified.md](normative/errata-unified.md).
+
 ## 4.1. Последовательность шагов (до старта дня 1.1)
 
 - **Шаг 0** — Приветствие + первичный дисклеймер.

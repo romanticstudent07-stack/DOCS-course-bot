@@ -9,6 +9,8 @@ contains: [вводная часть, сквозные инварианты, м�
 
 # БЛОК 15. ХРАНЕНИЕ/ДОСТАВКА КОНТЕНТА + АНТИ-ПИРАТСТВО
 
+> **Уточнено ERRATA-UNIFIED.** Photo Ingest Saga и export-worker — патч И3. Тексты ошибок загрузки, отзыв согласия C5 (фото) в Mini App и порог 10 МБ на выдаче — патч И4. ERRATA добавляет инвариант компакции outbox (ADD1), пять метрик рассылки (ADD2), почасовую пробу дедупликации (A1) и boot-gate по числу ротации бэкапов (ADD5). Object Lock отключён на бакетах с фото (иначе стирание невозможно), `COMPLIANCE`/WORM на бакетах аудита. См. [normative/I3-wave-c.md](normative/I3-wave-c.md), [normative/I4-wave-d.md](normative/I4-wave-d.md), [normative/errata-unified.md](normative/errata-unified.md).
+
 ## Часть I. Выжимка
 
 ### Что такое Блок 15 и как читать этот документ

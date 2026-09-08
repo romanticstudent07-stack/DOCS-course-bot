@@ -1,0 +1,87 @@
+# ============================================================
+# build/miniapp-api-contract.yaml — OpenAPI 3.1 для Mini App
+# Скелет. Наполняется Автором и техническим партнёром.
+# Источник: Б14 (Mini App v3.3 + дельта v3.4), И4, ERRATA E2
+# ============================================================
+
+openapi: 3.1.0
+info:
+  title: DOCS-course-bot — Mini App API
+  version: "0.1.0-skeleton"
+  description: |
+    Контракт клиента Mini App с сервером бота.
+    Источник истины: architecture/14-data-durability.md, normative/I4-wave-d.md, normative/errata-unified.md (E2).
+
+servers:
+  - url: "{s3-domain-ru}"
+    variables:
+      s3-domain-ru:
+        default: "TODO"
+        description: "Плейсхолдер {s3-domain-ru} блокирует прод. Boot-gate ERRATA раздел 6."
+
+# ---------------- Аутентификация ----------------
+components:
+  securitySchemes:
+    TelegramInitData:
+      type: apiKey
+      in: header
+      name: X-Telegram-Init-Data
+      description: |
+        initData из Telegram Web App SDK. Валидация HMAC-SHA256 с ключом бота.
+        Тихая переавторизация при истечении.
+
+paths:
+  # ---------------- Экспорт данных субъекта ----------------
+  /miniapp/v1/export/request:
+    post:
+      summary: Запрос экспорта данных субъекта (152-ФЗ)
+      security: [{TelegramInitData: []}]
+      # TODO: request body, responses, идемпотентность через client_op_id
+      responses:
+        "202":
+          description: Экспорт поставлен в очередь. Реальная отправка — export-worker (И3).
+
+  /miniapp/v1/export/{export_id}/download:
+    get:
+      # TODO: pre-signed PUT/GET, retention 24 ч
+      summary: Скачивание сгенерированного экспорта
+
+  # ---------------- Приём фото ----------------
+  /miniapp/v1/photo/submit:
+    post:
+      summary: Отправка фото участником (Photo Ingest Saga)
+      security: [{TelegramInitData: []}]
+      # TODO: multipart + client_op_id (идемпотентность), лимит 10 МБ (И4)
+
+  # ---------------- Отчёт CSP ----------------
+  /security/csp-report:
+    post:
+      summary: Report-URI CSP (E2 ERRATA)
+      # TODO: application/csp-report
+
+  # ---------------- Онбординг (SEAM-1) ----------------
+  /miniapp/v1/onboarding/first-launch:
+    post:
+      summary: Первый запуск Mini App — создание pid (SEAM-PATCH-1)
+      # TODO: возрастной гейт → pid (INV-AGE-GATE-BEFORE-PID, ADD3)
+
+  # ---------------- Согласия ----------------
+  /miniapp/v1/consents:
+    get:
+      summary: Список согласий C0–C6
+    post:
+      summary: Обновление согласия (в том числе отзыв C5-фото)
+
+  # ---------------- Тексты ----------------
+  /miniapp/v1/texts/{key}:
+    get:
+      summary: Чтение текста из text_registry по ключу {домен}.{имя} (И4)
+
+# ---------------- CSP-заголовок (E2 ERRATA) ----------------
+# csp_header:
+#   default-src 'self'
+#   script-src 'self'
+#   connect-src 'self' https://api.telegram.org
+#   frame-ancestors <telegram-domains>
+#   report-uri /security/csp-report
+#   # Запрет unsafe-eval сохранён

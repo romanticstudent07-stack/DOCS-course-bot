@@ -9,6 +9,8 @@ contains: [14.1–14.17, аксиомы X1–X6, инварианты, Р325–�
 
 # БЛОК 14. ДАННЫЕ, КАРТА ИЗМЕНЕНИЙ, ЗАМЕРЫ, PUBLISH_STAGE, ТЗ, «ФИНИША НЕТ», MINI APP
 
+> **Переопределено ERRATA-UNIFIED.** CSP Mini App: `default-src 'none'` из И4 **отменён**, канонично `default-src 'self'` с явным белым списком + запрет `unsafe-eval` (E2). Владелец `publish_epoch` — этот блок (FIX1); имена `publish_stage` (в теле) и `publish_epoch` (в FIX1) тождеством нигде не зафиксированы — читать как одну сущность до канонизации. Boot-gate по числу ротации бэкапов — ADD5 (при подстановке брать более строгую границу A4 с учётом WAL); плейсхолдер `{s3-domain-ru}` унифицирован с `{s3-domain}` (шлюз ERRATA раздел 6). Outbox, DLQ, `INV-OUTBOX-SENT-AT-COMPACTION` — патч И2 + ADD1 ERRATA. См. [normative/I2-wave-b.md](normative/I2-wave-b.md), [normative/I4-wave-d.md](normative/I4-wave-d.md), [normative/errata-unified.md](normative/errata-unified.md).
+
 Финальная единая выжимка, версия **v3.3 (с Mini App)** + подшитая снизу **дельта v3.4**.
 
 ## 14.1. Назначение блока и владение данными

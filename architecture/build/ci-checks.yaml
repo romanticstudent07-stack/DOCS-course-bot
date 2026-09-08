@@ -1,0 +1,81 @@
+# ============================================================
+# build/ci-checks.yaml — сводный реестр CI-чеков
+# Скелет. Наполняется Автором.
+# Источник: И1 (ci_checks_i1), И2 (ci_checks_i2), И3 (ci_checks_i3),
+#           И4 (ci_checks_i4), Б17 (ci_checks_b17)
+# Ожидаемое число: 50+ (40 из И1–И4 + 10 из Б17)
+# ============================================================
+
+ci_checks:
+  # ---------------- Уникальность и целостность ----------------
+  - id: unique_text_keys
+    source: И4
+    what: "Уникальность text_key в text_registry (RISK-L-16)"
+    command: "grep -R 'text_key:' architecture/**/*.md | sort | uniq -d | test $(wc -l) -eq 0"
+
+  - id: command_role_match
+    source: Б17
+    what: "Каждая команда в config/commands/*.yaml имеет запись в role_capability_matrix"
+    command: "TODO"
+
+  - id: no_free_text_shadow_reason
+    source: И1
+    what: "Причины теневой паузы — только enum, без свободного текста"
+    command: "TODO: исправить regex [^enum] (D-19)"
+
+  - id: age_gate_before_pid
+    source: ADD3 ERRATA
+    what: "pid не создаётся до жёсткой проверки даты рождения (INV-AGE-GATE-BEFORE-PID)"
+    command: "TODO"
+
+  - id: outbox_sent_at_compaction
+    source: ADD1 ERRATA + И2
+    what: "Компакция outbox с sent_at (INV-OUTBOX-SENT-AT-COMPACTION)"
+    command: "TODO"
+
+  # ---------------- Роли и доступы ----------------
+  - id: single_writer_participant_state
+    source: E1 ERRATA
+    what: "Единственный писатель participant_state — роль participant_state_projector"
+    command: "psql -c '\\dp participant_state' | grep -c INSERT | test $(...) -eq 1"
+
+  # ---------------- Тексты ----------------
+  - id: no_pre_legal_review_in_prod
+    source: prod_launch_gate (И1)
+    what: "Прод не стартует, пока есть legal_status: pre-legal-review"
+    command: "TODO"
+
+  - id: no_place_command
+    source: v3.1
+    what: "Ни одного упоминания /place или P6_place_command в actual корпусе"
+    command: "grep -R '/place\\|P6_place_command' architecture/ | test $(wc -l) -eq 0"
+
+  # ---------------- Аудит ----------------
+  - id: audit_no_csv_export
+    source: Б17
+    what: "Экспорт /audit запрещён в CSV"
+    command: "TODO"
+
+  - id: graph_k_anonymity
+    source: И4
+    what: "/graph требует k >= 5 (защита от атаки пересечением)"
+    command: "TODO"
+
+  # ---------------- Ссылочная целостность каталога ----------------
+  - id: no_broken_links
+    source: этот отчёт
+    what: "Ни одной висячей относительной ссылки в architecture/"
+    command: "markdown-link-check architecture/**/*.md"
+
+  - id: errata_backrefs_present
+    source: этот отчёт
+    what: "Все 16 файлов корпуса + И3 несут врезку 'Переопределено/Уточнено ERRATA-UNIFIED'"
+    command: "TODO: скрипт, проверяющий наличие врезки в 17 файлах"
+
+  # TODO: остальные 38+ чеков из ci_checks_i1..i4 и ci_checks_b17
+
+totals:
+  declared_i1_i4: 40
+  declared_b17: 10
+  actual: "TODO: пересчитать после наполнения"
+  gap: "actual - declared"

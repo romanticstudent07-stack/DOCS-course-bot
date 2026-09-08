@@ -37,7 +37,7 @@ contains: [SEAM1_onboarding_channel, known_typo_for_manual_fix, final_state, yam
 
 ## Известная опечатка исходника
 
-Патч сам сообщает об опечатке в разделе 8 единого ERRATA-слоя: «отмель text_registry» вместо «отмена text_registry», влияние на смысл — нулевое, действие — ручная правка при удобном случае. По правилу 7 нарезки текст в каталоге не исправлен: он перенесён дословно в [errata-unified.md](errata-unified.md), а правка заведена долгом в `_WIP-architecture-split.md`.
+Патч сам сообщает об опечатке в разделе 8 единого ERRATA-слоя: «отмель text_registry» вместо «отмена text_registry», влияние на смысл — нулевое, действие — ручная правка при удобном случае. По правилу 7 нарезки текст в каталоге не исправлен: он перенесён дословно в [errata-unified.md](errata-unified.md), а правка заведена долгом в [../appendix/D-source-defects.md](../appendix/D-source-defects.md), пункт D-31 «Опечатка "отмель"».
 
 ## Связи с каталогом
 
