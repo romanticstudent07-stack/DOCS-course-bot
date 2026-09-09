@@ -49,6 +49,8 @@ DOCS-course-bot/
 корпус v3 → И1 → И2 → И3 → И4 → Б17 → SEAM-PATCH-1 → ERRATA-UNIFIED (высшее)
 ```
 
+Это **ось старшинства**. Не путать с хронологией присоединения (`… → Б17 → ERRATA-UNIFIED → SEAM-PATCH-1`), которая идёт в другом порядке: SEAM-PATCH-1 подшит последним, но сам объявил себя `below_errata_unified`. Разбор двух осей — в [architecture/normative/README.md](architecture/normative/README.md).
+
 Подробнее — [architecture/normative/README.md](architecture/normative/README.md).
 
 ## Статус

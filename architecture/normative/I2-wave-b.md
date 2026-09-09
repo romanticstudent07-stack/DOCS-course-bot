@@ -13,6 +13,8 @@ contains: [meta, outbox_contract, backup_contract, participant_state_contract, s
 
 # ПАТЧ И2 — ВОЛНА B. Durability, participant_state, паузы, life-ops
 
+> **Канонический источник старшинства** — [README.md](README.md), раздел «Две оси: порядок присоединения ≠ ступень старшинства». Цепочка ниже в этом файле — порядок **присоединения**, а не ступень старшинства. Ступень старшинства: `корпус v3 → И1 → И2 → И3 → И4 → Б17 → SEAM-PATCH-1 → ERRATA-UNIFIED (высшая)`.
+
 > **Переопределено ERRATA-UNIFIED.** Спор о носителе `participant_state` решён окончательно: обычная таблица, наполняемая проектором (`regular_table_populated_by_projector`), — строка `projection.kind: materialized_view` в этом файле недействительна (E1). Запись только роли `participant_state_projector`, чтение — `participant_state_reader`, проектор в блоке 10, инвариант И-1 в силе. Фразовый hard-confirm сохранён (E3): двухшаг и фраза — слои, а не альтернативы. Компакция outbox усилена именованным инвариантом `INV-OUTBOX-SENT-AT-COMPACTION` (ADD1), метрики дополнены пятью новыми показателями и почасовой пробой дедупликации (ADD2, A1). `publish_epoch_owner: block14` из `contracts_in` подтверждён (FIX1). См. [errata-unified.md](errata-unified.md).
 
 ## Место в стеке старшинства

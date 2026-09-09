@@ -45,10 +45,19 @@ ci_checks:
     what: "Прод не стартует, пока есть legal_status: pre-legal-review"
     command: "TODO"
 
-  - id: no_place_command
+    - id: no_place_command
     source: v3.1
-    what: "Ни одного упоминания /place или P6_place_command в actual корпусе"
-    command: "grep -R '/place\\|P6_place_command' architecture/ | test $(wc -l) -eq 0"
+    what: "Ни одного упоминания /place как действующей команды (исторические справки разрешены)"
+    excluded_files:
+      - architecture/12-reserve.md                        # §12.3 — сам факт удаления
+      - architecture/README.md                            # реестр 1.10, строка резерва
+      - architecture/appendix/A-patch1-global-rules.md     # P-6 удалён
+      - architecture/appendix/B-failsafe-registry.md       # снятие примера place
+      - architecture/appendix/C-registries.md              # снятие строки парковки
+      - architecture/_WIP-architecture-split.md            # служебный журнал нарезки
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 2"
+
 
   # ---------------- Аудит ----------------
   - id: audit_no_csv_export
@@ -67,10 +76,19 @@ ci_checks:
     what: "Ни одной висячей относительной ссылки в architecture/"
     command: "markdown-link-check architecture/**/*.md"
 
-  - id: errata_backrefs_present
+    - id: errata_backrefs_present
     source: этот отчёт
-    what: "Все 16 файлов корпуса + И3 несут врезку 'Переопределено/Уточнено ERRATA-UNIFIED'"
-    command: "TODO: скрипт, проверяющий наличие врезки в 17 файлах"
+    what: "Все файлы корпуса + И3 несут врезку «Переопределено/Уточнено ERRATA-UNIFIED»"
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 4"
+
+      - id: precedence_single_source
+    source: этот отчёт
+    what: "Ступень старшинства объявлена только в normative/README.md; остальные файлы её цитируют со ссылкой на канон"
+    rule: "файл, содержащий цепочку «И1 → И2 → И3», обязан содержать строку «Канонический источник старшинства»"
+    forbidden_phrase: "ниже в цепочке старшинства"
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверки 6 и 7"
 
   # TODO: остальные 38+ чеков из ci_checks_i1..i4 и ci_checks_b17
 
