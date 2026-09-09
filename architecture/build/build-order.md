@@ -48,6 +48,62 @@ status: скелет
 6. `full_backup_rotation_cycle` заменён на число (более строгая граница A4 с учётом WAL).
 7. Все `pre-legal-review` сняты.
 
+## Порядок первых итераций (Mini App-first)
+
+Приоритет тестового запуска — Mini App-первый экран участника. Бот и backend поднимаются в объёме, необходимом для этого пути.
+
+### Итерация 0 — инфра (1 неделя)
+
+1. Yandex Cloud аккаунт + Managed PostgreSQL + Object Storage.
+2. Telegram Bot регистрация в BotFather: `/newbot`, `/newapp`, `/setmenubutton https://<s3-domain-ru>/`, `/setdomain`.
+3. Vite + React + TypeScript скелет через `npx @telegram-apps/create-mini-app`.
+4. FastAPI скелет + alembic + docker-compose.
+
+### Итерация 1 — онбординг (SEAM-1) (2 недели)
+
+**Mini App:**
+- Экраны `onb.welcome` → `onb.age-gate` → `onb.consent-152fz` → `onb.offer` → `onb.payment` → `onb.form` → `onb.checkup` → `onb.rules`.
+- Валидация `initData` на сервере (эндпоинт `/miniapp/v1/onboarding/first-launch`).
+- IndexedDB для черновиков анкеты.
+
+**Bot:**
+- `/start` в приватном чате → приветствие + Menu Button.
+- Fallback: «Установите последнюю версию Telegram и откройте кнопку меню».
+
+**Backend:**
+- Таблицы `tg_user_registry`, `participant_state`, `role_capability_matrix`.
+- Проектор `participant_state_projector`.
+- Стек `text_registry` минимальный (только тексты онбординга).
+
+### Итерация 2 — дневной модуль (2 недели)
+
+**Mini App:** `day.current` + отправка отчёта + счётчик жизней.
+**Bot:** утренний старт-пуш, напоминания-лестница.
+**Backend:** П-31, life-ops атомарность, `state_transition_log`.
+
+### Итерация 3 — Чек-Ап и Карточка (2 недели)
+
+**Mini App:** `me.card`, `me.consents`, `me.change-map`, `me.settings-notifications`.
+**Bot:** `/card <@user>` для владельца в Рабочей группе.
+**Backend:** генерация Карточки на лету, аудит `pii_access_log`.
+
+### Итерация 4 — оплата и refund (2 недели)
+
+**Mini App:** `payment.pay`, `payment.refund`, `payment.act`.
+**Bot:** reply-команда `/refund` с hard-confirm.
+**Backend:** Refund Saga (И3), интеграция с PSP (YooKassa/CloudPayments), retention `refund_details`.
+
+### Итерация 5 — фото и хранение (2 недели)
+
+**Mini App:** `content.photo-submit` + деконструкция pre-signed URL.
+**Bot:** deep-link «Открыть материал».
+**Backend:** Photo Ingest Saga, S3 bucket без Object Lock (для стирания), WORM на аудите.
+
+### Итерация 6 — Панель Автора (2 недели)
+
+**Bot целиком:** реестр 35 команд из [bot-commands-registry.yaml](bot-commands-registry.yaml), hard-confirm (E3), whitelist admin-ID, дашборд владельца, palette.
+**Backend:** `admin_action_log`, `role_capability_matrix`, `hard_confirm_phrases`.
+
 ## Минимальный синтетический запуск (для приёмки)
 
 ```
