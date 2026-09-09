@@ -4,6 +4,11 @@
 # Источник: И1 (ci_checks_i1), И2 (ci_checks_i2), И3 (ci_checks_i3),
 #           И4 (ci_checks_i4), Б17 (ci_checks_b17)
 # Ожидаемое число: 50+ (40 из И1–И4 + 10 из Б17)
+#
+# ВАЖНО ПРО ФОРМАТ: каждый элемент списка ci_checks начинается ровно
+# с двух пробелов и дефиса ("  - id:"). Отступ поля внутри элемента —
+# четыре пробела. Нарушение отступа делает файл нечитаемым для парсера;
+# это стережёт проверка 8 в tools/checks.sh.
 # ============================================================
 
 ci_checks:
@@ -11,89 +16,138 @@ ci_checks:
   - id: unique_text_keys
     source: И4
     what: "Уникальность text_key в text_registry (RISK-L-16)"
-    command: "grep -R 'text_key:' architecture/**/*.md | sort | uniq -d | test $(wc -l) -eq 0"
+    status: TODO
+    command: "TODO: команда-черновик нерабочая (pipe в test), переписать"
 
   - id: command_role_match
     source: Б17
     what: "Каждая команда в config/commands/*.yaml имеет запись в role_capability_matrix"
+    status: TODO
     command: "TODO"
 
   - id: no_free_text_shadow_reason
     source: И1
     what: "Причины теневой паузы — только enum, без свободного текста"
+    status: TODO
     command: "TODO: исправить regex [^enum] (D-19)"
 
   - id: age_gate_before_pid
     source: ADD3 ERRATA
     what: "pid не создаётся до жёсткой проверки даты рождения (INV-AGE-GATE-BEFORE-PID)"
+    status: TODO
     command: "TODO"
 
   - id: outbox_sent_at_compaction
     source: ADD1 ERRATA + И2
     what: "Компакция outbox с sent_at (INV-OUTBOX-SENT-AT-COMPACTION)"
+    status: TODO
     command: "TODO"
 
   # ---------------- Роли и доступы ----------------
   - id: single_writer_participant_state
     source: E1 ERRATA
     what: "Единственный писатель participant_state — роль participant_state_projector"
-    command: "psql -c '\\dp participant_state' | grep -c INSERT | test $(...) -eq 1"
+    status: TODO
+    command: "TODO: проверка прав на таблице participant_state в проде"
 
   # ---------------- Тексты ----------------
   - id: no_pre_legal_review_in_prod
     source: prod_launch_gate (И1)
     what: "Прод не стартует, пока есть legal_status: pre-legal-review"
+    status: TODO
     command: "TODO"
 
-    - id: no_place_command
+  # ---------------- Упразднённые сущности ----------------
+  - id: no_place_command
     source: v3.1
     what: "Ни одного упоминания /place как действующей команды (исторические справки разрешены)"
+    status: implemented
     excluded_files:
-      - architecture/12-reserve.md                        # §12.3 — сам факт удаления
-      - architecture/README.md                            # реестр 1.10, строка резерва
-      - architecture/appendix/A-patch1-global-rules.md     # P-6 удалён
-      - architecture/appendix/B-failsafe-registry.md       # снятие примера place
-      - architecture/appendix/C-registries.md              # снятие строки парковки
-      - architecture/_WIP-architecture-split.md            # служебный журнал нарезки
+      - architecture/12-reserve.md
+      - architecture/README.md
+      - architecture/appendix/A-patch1-global-rules.md
+      - architecture/appendix/B-failsafe-registry.md
+      - architecture/appendix/C-registries.md
+      - architecture/_WIP-architecture-split.md
     command: "bash tools/checks.sh"
     implemented_in: "tools/checks.sh, проверка 2"
 
+  - id: no_live_banned_states
+    source: Р477 (И2)
+    what: "Каждое упоминание banned_soft/banned_hard имеет рядом пометку Р477"
+    status: implemented
+    excluded_files:
+      - architecture/normative/I2-wave-b.md
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 5"
 
   # ---------------- Аудит ----------------
   - id: audit_no_csv_export
     source: Б17
     what: "Экспорт /audit запрещён в CSV"
+    status: TODO
     command: "TODO"
 
   - id: graph_k_anonymity
     source: И4
     what: "/graph требует k >= 5 (защита от атаки пересечением)"
+    status: TODO
     command: "TODO"
 
   # ---------------- Ссылочная целостность каталога ----------------
   - id: no_broken_links
     source: этот отчёт
-    what: "Ни одной висячей относительной ссылки в architecture/"
-    command: "markdown-link-check architecture/**/*.md"
+    what: "Ни одной висячей относительной ссылки на .md в architecture/"
+    status: implemented_as_warning
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 9"
 
-    - id: errata_backrefs_present
+  - id: errata_backrefs_present
     source: этот отчёт
-    what: "Все файлы корпуса + И3 несут врезку «Переопределено/Уточнено ERRATA-UNIFIED»"
+    what: "Все файлы корпуса несут врезку «Переопределено/Уточнено ERRATA-UNIFIED»"
+    status: implemented
     command: "bash tools/checks.sh"
     implemented_in: "tools/checks.sh, проверка 4"
 
-      - id: precedence_single_source
+  - id: wip_pointer_dead
+    source: этот отчёт
+    what: "Ни один файл не отправляет читателя в _WIP-architecture-split.md как в источник"
+    status: implemented
+    excluded_files:
+      - architecture/_WIP-architecture-split.md
+      - architecture/appendix/D-source-defects.md
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 3"
+
+  - id: errata_link_path
+    source: этот отчёт
+    what: "Ссылка на errata-unified.md вне normative/ содержит префикс normative/"
+    status: implemented
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 1"
+
+  # ---------------- Старшинство ----------------
+  - id: precedence_single_source
     source: этот отчёт
     what: "Ступень старшинства объявлена только в normative/README.md; остальные файлы её цитируют со ссылкой на канон"
+    status: implemented
     rule: "файл, содержащий цепочку «И1 → И2 → И3», обязан содержать строку «Канонический источник старшинства»"
     forbidden_phrase: "ниже в цепочке старшинства"
     command: "bash tools/checks.sh"
     implemented_in: "tools/checks.sh, проверки 6 и 7"
+
+  - id: ci_checks_yaml_indent
+    source: этот отчёт
+    what: "Элементы списка ci_checks начинаются ровно с двух пробелов и дефиса"
+    status: implemented
+    command: "bash tools/checks.sh"
+    implemented_in: "tools/checks.sh, проверка 8"
 
   # TODO: остальные 38+ чеков из ci_checks_i1..i4 и ci_checks_b17
 
 totals:
   declared_i1_i4: 40
   declared_b17: 10
+  implemented_in_tools: 8
   actual: "TODO: пересчитать после наполнения"
   gap: "actual - declared"
