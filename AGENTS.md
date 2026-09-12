@@ -16,6 +16,7 @@
 3. **[architecture/build/DIVISION.md](architecture/build/DIVISION.md)** — что реализуется в Mini App, что в боте, что в backend.
 4. **[architecture/build/build-order.md](architecture/build/build-order.md)** — порядок первых итераций.
 5. **[CONTEXT.md](CONTEXT.md)** — быстрый обзор.
+6. **[architecture/CANONICAL-SOURCES.md](architecture/CANONICAL-SOURCES.md)** — правило «верхний файл vs подпапка» для блоков с нарезкой (`10/`, `15/`, `99/`).
 
 ## Правила старшинства (критично)
 

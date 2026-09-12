@@ -1,0 +1,36 @@
+name: architecture-checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  architecture-checks:
+    name: tools/checks.sh
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify runner script exists
+        run: |
+          test -f tools/checks.sh || {
+            echo "::error::tools/checks.sh отсутствует — CI-чеки нечем запускать"
+            exit 1
+          }
+
+      - name: Make checks executable
+        run: chmod +x tools/checks.sh
+
+      - name: Syntax check
+        run: bash -n tools/checks.sh
+
+      - name: Run architecture checks
+        run: bash tools/checks.sh

@@ -10,7 +10,7 @@ contains: [yaml v2-ext-r, invariants_final, risks_accepted_by_operator, softened
 
 # YAML-КОНТРАКТ БЛОКА — v2-ext-r
 
-> Старшая редакция юрблока: при расхождении с [99/00-digest.md](00-digest.md) и [99/02-yaml-v1.md](02-yaml-v1.md) побеждает этот файл. Ключ `depends_on` ссылается на артефакт `legal_block_v2_patch`, которого в исходнике нет (в прозе ему соответствует [99/01-patch-v2.md](01-patch-v2.md)) — висячая зависимость, см. открытые вопросы в [99-legal.md](../99-legal.md).
+> Старшая редакция юрблока: при расхождении с [99/00-digest.md](99-00-digest.md) и [99/02-yaml-v1.md](99-02-yaml-v1.md) побеждает этот файл. Ключ `depends_on` ссылается на артефакт `legal_block_v2_patch`, которого в исходнике нет (в прозе ему соответствует [99/01-patch-v2.md](99-01-patch-v2.md)) — висячая зависимость, см. открытые вопросы в [99-legal.md](../99-legal.md).
 
 ```yaml
 artifact: legal_block_v2ext_patch_rebuilt
