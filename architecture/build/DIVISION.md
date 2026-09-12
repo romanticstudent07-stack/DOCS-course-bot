@@ -93,4 +93,4 @@ apps/bot/       ← Telegram-бот (Python + aiogram / grammY)
 apps/api/       ← backend (FastAPI + PostgreSQL + Redis)
 ```
 
-Если задача пришла без указания блока — открой [../CONTEXT.md](../CONTEXT.md), потом [../AGENTS.md](../AGENTS.md), потом этот файл.
+Если задача пришла без указания блока — открой [../../CONTEXT.md](../../CONTEXT.md), потом [../../AGENTS.md](../../AGENTS.md), потом этот файл.
